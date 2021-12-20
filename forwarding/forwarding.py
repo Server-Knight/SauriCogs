@@ -75,32 +75,18 @@ class Forwarding(commands.Cog):
             )
             embed.set_author(name=message.author, icon_url=message.author.avatar_url)
             embed.set_footer(text=f"User ID: {message.author.id}")
-            await message.author.send("Message has been delivered.")
+            await self._send_to(embed)
         else:
-            embed = discord.Embed(
-                colour=discord.Colour.red(),
-                description=message.content,
-                timestamp=message.created_at,
-            )
-            embed.set_author(name=message.author, icon_url=message.author.avatar_url)
-            embed.set_image(url=message.attachments[0].url)
-            embed.set_footer(text=f"User ID: {message.author.id}")
-            await message.author.send(
-                "Message has been delivered. Note that if you've added multiple attachments, I've sent only the first one."
-            )
-        await self._send_to(embed)
-
-    @commands.command()
-    @checks.admin()
-    async def pm(self, ctx: commands.Context, user_id: int, *, message: str):
-        """PMs a person."""
-        destination = get(ctx.bot.get_all_members(), id=user_id)
-        if not destination:
-            return await ctx.send(
-                "Invalid ID or user not found. You can only send messages to people I share a server with."
-            )
-        await destination.send(message)
-        await ctx.send(f"Sent message to {destination}.")
+            for index, att in enumerate(message.attachments):
+                embed = discord.Embed(
+                    colour=discord.Colour.red(),
+                    description=message.content,
+                    timestamp=message.created_at,
+                )
+                embed.set_author(name=message.author, icon_url=message.author.avatar_url)
+                embed.set_image(url=att.url)
+                embed.set_footer(text=f"User ID: {message.author.id} | {index} of {len(message.attachments)}")
+                await self._send_to(embed)
 
     @checks.is_owner()
     @commands.command(name="self")
