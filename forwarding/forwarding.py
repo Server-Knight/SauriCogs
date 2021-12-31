@@ -85,7 +85,7 @@ class Forwarding(commands.Cog):
                 )
                 embed.set_author(name=message.author, icon_url=message.author.avatar_url)
                 embed.set_image(url=att.url)
-                embed.set_footer(text=f"User ID: {message.author.id} | {index} of {len(message.attachments)}")
+                embed.set_footer(text=f"User ID: {message.author.id} | {index + 1} of {len(message.attachments)}")
                 await self._send_to(embed)
 
     @checks.is_owner()
